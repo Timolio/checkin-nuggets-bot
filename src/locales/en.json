@@ -1,0 +1,14 @@
+{
+    "checkin": {
+        "success": "✅ You checked in successfully!",
+        "already_done": "⏳ You've already checked in today!",
+        "no_timezone": "❌ First set your timezone with /settimezone."
+    },
+    "settimezone": {
+        "choose": "🌍 Choose your timezone from the list:",
+        "set": "✅ Your timezone set to **{{timezone}}**!"
+    },
+    "errors": {
+        "generic": "❌ Something went wrong. Try again."
+    }
+}
