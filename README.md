@@ -9,3 +9,11 @@
 /settimezone установить часовой пояс, чтобы каждый пользователь мог отметится с 00:00 до 00:00.
 
 При достижении какой-то награды каким-то пользователем, создаётся личный канал для выдачи награды. После выдачи админ может закрыть кейс и написать комментарий к нему.
+
+![Image](https://github.com/user-attachments/assets/97523dbc-da4a-41f9-ab03-2813772cf306)
+
+![Image](https://github.com/user-attachments/assets/b9c60e97-6bd7-4b27-b7e6-9a9d463ee43b)
+
+![Image](https://github.com/user-attachments/assets/2ca1278b-2c8a-497d-bf7b-643b7479c523)
+
+![Image](https://github.com/user-attachments/assets/a2fc8efa-eca2-44eb-9486-cafc36003183)
