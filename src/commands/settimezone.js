@@ -21,11 +21,11 @@ module.exports = {
     ],
 
     callback: async (client, interaction) => {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
-        const userLang = interaction.locale;
-
         try {
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+            const userLang = interaction.locale;
+
             const user =
                 (await User.findOne({ userId: interaction.user.id })) ||
                 new User({ userId: interaction.user.id });

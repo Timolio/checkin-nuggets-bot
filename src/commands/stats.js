@@ -17,14 +17,14 @@ module.exports = {
     ],
 
     callback: async (client, interaction) => {
-        await interaction.deferReply();
-
-        const targetUser =
-            interaction.options.getUser('user') || interaction.user;
-        const guildId = interaction.guild.id;
-        const userLang = interaction.locale;
-
         try {
+            await interaction.deferReply();
+
+            const targetUser =
+                interaction.options.getUser('user') || interaction.user;
+            const guildId = interaction.guild.id;
+            const userLang = interaction.locale;
+
             const guildUser = await GuildUser.findOne({
                 userId: targetUser.id,
                 guildId,

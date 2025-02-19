@@ -56,73 +56,81 @@ module.exports = {
     ],
 
     callback: async (client, interaction) => {
-        const subCommand = interaction.options.getSubcommand();
-        const guildId = interaction.guild.id;
-        const guildData = await Guild.findOne({ guildId });
-        const userLang = interaction.locale;
+        try {
+            const subCommand = interaction.options.getSubcommand();
+            const guildId = interaction.guild.id;
+            const guildData = await Guild.findOne({ guildId });
+            const userLang = interaction.locale;
 
-        switch (subCommand) {
-            case 'add':
-                const type = interaction.options.getString('type');
-                const threshold = interaction.options.getInteger('threshold');
+            switch (subCommand) {
+                case 'add':
+                    const type = interaction.options.getString('type');
+                    const threshold =
+                        interaction.options.getInteger('threshold');
 
-                await Guild.updateOne(
-                    { guildId },
-                    {
-                        $push: {
-                            rewards: {
-                                type,
-                                threshold,
+                    await Guild.updateOne(
+                        { guildId },
+                        {
+                            $push: {
+                                rewards: {
+                                    type,
+                                    threshold,
+                                },
                             },
                         },
-                    },
-                    { upsert: true }
-                );
+                        { upsert: true }
+                    );
 
-                await interaction.reply(t('rewards.added', userLang));
-                break;
-            case 'remove':
-                const _id = interaction.options.getString('id');
+                    await interaction.reply(t('rewards.added', userLang));
+                    break;
+                case 'remove':
+                    const _id = interaction.options.getString('id');
 
-                if (!guildData?.rewards?.some(reward => reward._id === _id)) {
-                    return interaction.reply({
-                        content: t('rewards.not_found', userLang),
+                    if (
+                        !guildData?.rewards?.some(reward => reward._id === _id)
+                    ) {
+                        return interaction.reply({
+                            content: t('rewards.not_found', userLang),
+                            ephemeral: true,
+                        });
+                    }
+
+                    await Guild.updateOne(
+                        { guildId },
+                        { $pull: { rewards: { _id } } }
+                    );
+
+                    interaction.reply({
+                        content: t('rewards.removed', userLang),
                         ephemeral: true,
                     });
-                }
+                    break;
+                case 'list':
+                    const rewards = guildData?.rewards || [];
 
-                await Guild.updateOne(
-                    { guildId },
-                    { $pull: { rewards: { _id } } }
-                );
+                    const embed = new EmbedBuilder()
+                        .setTitle('📜')
+                        .setColor('#3498db');
+                    if (rewards.length === 0) {
+                        embed.setDescription(t('rewards.empty'), userLang);
+                    } else {
+                        const fields = rewards.map(reward => ({
+                            name: `\`ID: ${reward._id}\``,
+                            value: `${reward.threshold} ${reward.type}`,
+                            inline: false,
+                        }));
 
-                interaction.reply({
-                    content: t('rewards.removed', userLang),
-                    ephemeral: true,
-                });
-                break;
-            case 'list':
-                const rewards = guildData?.rewards || [];
-
-                const embed = new EmbedBuilder()
-                    .setTitle('📜')
-                    .setColor('#3498db');
-                if (rewards.length === 0) {
-                    embed.setDescription(t('rewards.empty'), userLang);
-                } else {
-                    const fields = rewards.map(reward => ({
-                        name: `\`ID: ${reward._id}\``,
-                        value: `${reward.threshold} ${reward.type}`,
-                        inline: false,
-                    }));
-
-                    embed.addFields(fields);
-                }
-                interaction.reply({
-                    embeds: [embed],
-                    ephemeral: true,
-                });
-                break;
+                        embed.addFields(fields);
+                    }
+                    interaction.reply({
+                        embeds: [embed],
+                        ephemeral: true,
+                    });
+                    break;
+            }
+        } catch (error) {
+            console.error('/rewards error:', error);
+            interaction.editReply(t('errors.generic', userLang));
         }
     },
 };

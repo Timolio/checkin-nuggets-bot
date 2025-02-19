@@ -13,13 +13,13 @@ module.exports = {
     description: 'Daily check-in',
 
     callback: async (client, interaction) => {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
-        const userLang = interaction.locale;
-        const guildId = interaction.guild.id;
-        const userId = interaction.user.id;
-
         try {
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+            const userLang = interaction.locale;
+            const guildId = interaction.guild.id;
+            const userId = interaction.user.id;
+
             // Проверка часового пояса
             const user = await User.findOne({ userId });
             if (!user?.timezone) {
