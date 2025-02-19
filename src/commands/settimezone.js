@@ -23,7 +23,7 @@ module.exports = {
     callback: async (client, interaction) => {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-        const userLang = interaction.locale || 'en';
+        const userLang = interaction.locale;
 
         try {
             const user =
@@ -39,7 +39,7 @@ module.exports = {
 
                 if (now < cooldownEnd) {
                     return interaction.editReply(
-                        '🚫 Менять часовый пояс можно только **раз в 24 часа**! Попробуй позже.'
+                        t('settimezone.restrict', userLang)
                     );
                 }
             }
@@ -48,7 +48,7 @@ module.exports = {
             const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
             if (!timeRegex.test(timeInput)) {
                 return interaction.editReply(
-                    '❌ Invalid time format. Use **HH:mm** (e.g. 15:30).'
+                    t('settimezone.invalid', userLang)
                 );
             }
 
@@ -70,7 +70,7 @@ module.exports = {
 
             if (zones.length === 0) {
                 return interaction.editReply(
-                    '❌ Не найдено подходящих часовых поясов. Проверьте время.'
+                    t('settimezone.not_found', userLang)
                 );
             }
 
@@ -86,7 +86,7 @@ module.exports = {
 
             const selectMenu = new StringSelectMenuBuilder()
                 .setCustomId('timezone-select')
-                .setPlaceholder('Выберите ваш часовой пояс')
+                .setPlaceholder('-')
                 .addOptions(
                     zones.slice(0, 25).map(zone => ({
                         label: zone.replace('_', ' '),

@@ -13,7 +13,13 @@ module.exports = async client => {
         console.log('⌛ Starting to synchronize commands...');
 
         for (const localCommand of localCommands) {
-            const { name, description, options, deleted } = localCommand;
+            const {
+                name,
+                description,
+                defaultMemberPermissions,
+                options,
+                deleted,
+            } = localCommand;
 
             const existingCommand = await applicationCommands.cache.find(
                 command => command.name === name
@@ -30,10 +36,12 @@ module.exports = async client => {
                     !deepCompare(localCommand, existingCommand, [
                         'description',
                         'options',
+                        'defaultMemberPermissions',
                     ])
                 ) {
                     await applicationCommands.edit(existingCommand.id, {
                         description,
+                        defaultMemberPermissions,
                         options: options || [],
                     });
                     console.log(`✅ Updated command /${name}`);
@@ -49,6 +57,7 @@ module.exports = async client => {
                 await applicationCommands.create({
                     name,
                     description,
+                    defaultMemberPermissions,
                     options: options || [],
                 });
 

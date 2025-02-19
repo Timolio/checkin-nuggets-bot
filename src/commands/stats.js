@@ -5,7 +5,8 @@ const GuildUser = require('../models/GuildUser');
 
 module.exports = {
     name: 'stats',
-    description: 'Show check-in stats',
+    description:
+        'Displays the check-in statistics for yourself or another user.',
     options: [
         {
             name: 'user',
@@ -21,7 +22,7 @@ module.exports = {
         const targetUser =
             interaction.options.getUser('user') || interaction.user;
         const guildId = interaction.guild.id;
-        const userLang = interaction.locale || 'en';
+        const userLang = interaction.locale;
 
         try {
             const guildUser = await GuildUser.findOne({
@@ -30,26 +31,24 @@ module.exports = {
             });
 
             const embed = new EmbedBuilder().setAuthor({
-                name: `${targetUser.username}'s stats`,
+                name: t('stats.title', userLang, { name: targetUser.username }),
                 iconURL: targetUser.displayAvatarURL(),
             });
 
             if (!guildUser) {
-                embed.setDescription('No data');
+                embed.setDescription(t('stats.no_data', userLang));
             } else {
-                const streakBar =
-                    '▰'.repeat(guildUser.currentStreak) +
-                    '▱'.repeat(Math.max(0, 7 - guildUser.currentStreak));
-
                 embed.addFields(
                     {
-                        name: 'Total',
+                        name: t('stats.total', userLang),
                         value: `${guildUser.totalCheckins}`,
                         inline: true,
                     },
                     {
-                        name: 'Streak',
-                        value: `${streakBar} (${guildUser.currentStreak})`,
+                        name: t('stats.streak', userLang),
+                        value: `${guildUser.currentStreak} ${
+                            guildUser.currentStreak > 1 ? ' 🔥' : ''
+                        }`,
                         inline: true,
                     }
                 );
