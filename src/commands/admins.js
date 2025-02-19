@@ -4,21 +4,23 @@ const {
     EmbedBuilder,
 } = require('discord.js');
 const Guild = require('../models/Guild');
+const t = require('../utils/t');
 
 module.exports = {
     name: 'admins',
-    description: '🔧 Set the role managing rewards',
+    description:
+        'Manage the bot admin roles having access to reward distribution.',
     defaultMemberPermissions: PermissionsBitField.Flags.Administrator,
     options: [
         {
             type: ApplicationCommandOptionType.Subcommand,
             name: 'add',
-            description: 'Add new admin role',
+            description: 'Add a new admin role.',
             options: [
                 {
                     type: ApplicationCommandOptionType.Role,
                     name: 'role',
-                    description: 'role',
+                    description: 'Role to set.',
                     required: true,
                 },
             ],
@@ -26,12 +28,12 @@ module.exports = {
         {
             type: ApplicationCommandOptionType.Subcommand,
             name: 'remove',
-            description: 'Remove admin role',
+            description: 'Remove an admin role by its ID.',
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'id',
-                    description: 'Role id from /admins list',
+                    description: 'Role ID from /admins list to remove.',
                     required: true,
                 },
             ],
@@ -39,7 +41,7 @@ module.exports = {
         {
             type: ApplicationCommandOptionType.Subcommand,
             name: 'list',
-            description: 'Admin roles list',
+            description: 'View a list of all active bot admin roles.',
         },
     ],
 
@@ -47,6 +49,7 @@ module.exports = {
         const subCommand = interaction.options.getSubcommand();
         const guildId = interaction.guild.id;
         const guildData = await Guild.findOne({ guildId });
+        const userLang = interaction.locale;
 
         switch (subCommand) {
             case 'add':
@@ -54,7 +57,7 @@ module.exports = {
 
                 if (guildData?.adminRoles?.includes(role.id)) {
                     return interaction.reply({
-                        content: '❌ Эта роль уже добавлена.',
+                        content: t('admins.already', userLang),
                         ephemeral: true,
                     });
                 }
@@ -66,7 +69,7 @@ module.exports = {
                 );
 
                 await interaction.reply({
-                    content: `✅ Роль <@&${role.id}> добавлена в администраторы!`,
+                    content: t('admins.added', userLang),
                     ephemeral: true,
                 });
                 break;
@@ -75,7 +78,7 @@ module.exports = {
 
                 if (!guildData?.adminRoles?.includes(roleId)) {
                     return interaction.reply({
-                        content: '❌ Роль не найдена в списке.',
+                        content: t('admins.not_found', userLang),
                         ephemeral: true,
                     });
                 }
@@ -86,7 +89,7 @@ module.exports = {
                 );
 
                 interaction.reply({
-                    content: '✅ Роль успешно удалена!',
+                    content: t('admins.removed', userLang),
                     ephemeral: true,
                 });
 
@@ -98,7 +101,7 @@ module.exports = {
                     .setTitle('📜')
                     .setColor('#3498db');
                 if (roles.length === 0) {
-                    embed.setDescription('Список пуст');
+                    embed.setDescription(t('admins.empty', userLang));
                 } else {
                     const fields = roles.map(role => ({
                         name: `\`ID: ${role}\``,

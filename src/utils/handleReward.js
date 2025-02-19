@@ -56,9 +56,8 @@ module.exports = async (interaction, reward, guildData) => {
     );
 
     channel.send({
-        content: t('handle_reward.message', locale, {
+        content: t('handle_reward.' + reward.type, locale, {
             threshold: reward.threshold,
-            type: reward.type,
             userId: user.id,
         }),
         components: [closeButton],

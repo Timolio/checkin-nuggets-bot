@@ -1,7 +1,7 @@
 {
     "checkin": {
         "success": "✅ Checked in successfully!",
-        "already_done": "You've already checked in today! ✨\nCome back tomorrow for your next check-in.",
+        "already_done": "You've already checked in today! ✨\nCome back tomorrow and try again.",
         "no_timezone": "You haven't set a timezone yet! 🌍\nPlease set it with `/settimezone [HH:MM]`.",
         "reward": {
             "streak": "🎉 Congrats! You've reached a streak of {{streak}} days and earned a reward! <#{{channelId}}>",
@@ -22,7 +22,8 @@
         "no_data": "❌ No data found for the user."
     },
     "handle_reward": {
-        "message": "🎉 <@{{userId}}> has reached {{threshold}} {{type}} check-ins!\nAdmins will proceed with the reward distribution."
+        "streak": "🎉 <@{{userId}}> has reached a streak of {{threshold}} day(s)!\nAdmins will proceed with the reward distribution.",
+        "total": "🎉 <@{{userId}}> has checked in {{threshold}} time(s) in total!\nAdmins will proceed with the reward distribution."
     },
     "errors": {
         "generic": "⚠️ Oops! Something went wrong. Please try again later."
@@ -30,5 +31,14 @@
     "modal": {
         "title": "Case closure",
         "comment": "Comment (optional)"
+    },
+    "rewards": {
+        "added": "✅ Reward added!",
+        "removed": "✅ Reward removed successfully!",
+        "not_found": "❌ The reward doesn't exist.",
+        "empty": "Empty"
+    },
+    "admins": {
+        "added": ""
     }
 }

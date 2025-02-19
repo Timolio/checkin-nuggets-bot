@@ -4,6 +4,7 @@ const {
     EmbedBuilder,
 } = require('discord.js');
 const Guild = require('../models/Guild');
+const t = require('../utils/t');
 
 module.exports = {
     name: 'rewards',
@@ -29,7 +30,7 @@ module.exports = {
                 {
                     type: ApplicationCommandOptionType.Integer,
                     name: 'threshold',
-                    description: 'required number',
+                    description: 'threshold',
                     required: true,
                 },
             ],
@@ -58,6 +59,7 @@ module.exports = {
         const subCommand = interaction.options.getSubcommand();
         const guildId = interaction.guild.id;
         const guildData = await Guild.findOne({ guildId });
+        const userLang = interaction.locale;
 
         switch (subCommand) {
             case 'add':
@@ -77,16 +79,14 @@ module.exports = {
                     { upsert: true }
                 );
 
-                await interaction.reply(
-                    `✅ Reward added: ${type} ≥ ${threshold}`
-                );
+                await interaction.reply(t('rewards.added', userLang));
                 break;
             case 'remove':
                 const _id = interaction.options.getString('id');
 
                 if (!guildData?.rewards?.some(reward => reward._id === _id)) {
                     return interaction.reply({
-                        content: '❌ Награда не найдена в списке.',
+                        content: t('rewards.not_found', userLang),
                         ephemeral: true,
                     });
                 }
@@ -97,7 +97,7 @@ module.exports = {
                 );
 
                 interaction.reply({
-                    content: '✅ Роль успешно удалена!',
+                    content: t('rewards.removed', userLang),
                     ephemeral: true,
                 });
                 break;
@@ -108,7 +108,7 @@ module.exports = {
                     .setTitle('📜')
                     .setColor('#3498db');
                 if (rewards.length === 0) {
-                    embed.setDescription('Список пуст');
+                    embed.setDescription(t('rewards.empty'), userLang);
                 } else {
                     const fields = rewards.map(reward => ({
                         name: `\`ID: ${reward._id}\``,

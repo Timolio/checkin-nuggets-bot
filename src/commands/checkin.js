@@ -41,8 +41,6 @@ module.exports = {
                 );
                 const nowLocal = moment().tz(user.timezone);
 
-                console.log(lastCheckinLocal, nowLocal);
-
                 if (lastCheckinLocal.isSame(nowLocal, 'day')) {
                     // Чекин уже сделан сегодня = уведомляем пользователя
                     return interaction.editReply(
@@ -85,44 +83,43 @@ module.exports = {
 
             // Проверяем условия наград сервера
             const guildData = await Guild.findOne({ guildId });
-            console.log(guildData);
-            if (!guildData?.rewards?.length) return;
+            if (guildData?.rewards?.length) {
+                for (const reward of guildData.rewards) {
+                    const currentValue =
+                        guildUser[
+                            reward.type === 'streak'
+                                ? 'currentStreak'
+                                : 'totalCheckins'
+                        ];
 
-            for (const reward of guildData.rewards) {
-                const currentValue =
-                    guildUser[
-                        reward.type === 'streak'
-                            ? 'currentStreak'
-                            : 'totalCheckins'
-                    ];
+                    if (currentValue === reward.threshold) {
+                        // Подходящая награда найдена = создаём кейс и открываем канал
+                        const oldReward = await Reward.findOne({
+                            userId,
+                            guildId,
+                            'reward._id': reward._id,
+                        });
 
-                if (currentValue === reward.threshold) {
-                    // Подходящая награда найдена = создаём кейс и открываем канал
-                    const oldReward = await Reward.findOne({
-                        userId,
-                        guildId,
-                        'reward._id': reward._id,
-                    });
+                        if (oldReward) continue;
 
-                    if (oldReward) continue;
+                        const channelId = await handleReward(
+                            interaction,
+                            reward,
+                            guildData
+                        );
 
-                    const channelId = await handleReward(
-                        interaction,
-                        reward,
-                        guildData
-                    );
-
-                    const message =
-                        reward.type === 'streak'
-                            ? t('checkin.reward.streak', userLang, {
-                                  channelId,
-                                  treak: guildUser.currentStreak,
-                              })
-                            : t('checkin.reward.total', userLang, {
-                                  channelId,
-                                  total: guildUser.totalCheckins,
-                              });
-                    return interaction.editReply(message);
+                        const message =
+                            reward.type === 'streak'
+                                ? t('checkin.reward.streak', userLang, {
+                                      channelId,
+                                      treak: guildUser.currentStreak,
+                                  })
+                                : t('checkin.reward.total', userLang, {
+                                      channelId,
+                                      total: guildUser.totalCheckins,
+                                  });
+                        return interaction.editReply(message);
+                    }
                 }
             }
 
