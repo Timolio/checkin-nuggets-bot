@@ -6,9 +6,10 @@ const {
     ButtonStyle,
 } = require('discord.js');
 const Reward = require('../models/Reward');
+const t = require('../utils/t');
 
 module.exports = async (interaction, reward, guildData) => {
-    const { guild, user } = interaction;
+    const { guild, user, locale } = interaction;
 
     const newReward = new Reward({
         userId: user.id,
@@ -25,7 +26,7 @@ module.exports = async (interaction, reward, guildData) => {
         ],
     }));
 
-    const channelName = `${user.username}-reward-${reward._id}`;
+    const channelName = `${user.username}-${reward._id}`;
 
     const channel = await guild.channels.create({
         name: channelName,
@@ -49,15 +50,17 @@ module.exports = async (interaction, reward, guildData) => {
     const closeButton = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId(`close_reward_${newReward._id}`)
-            .setLabel('Закрыть канал')
+            .setLabel('Close case')
             .setStyle(ButtonStyle.Danger)
             .setEmoji('🔒')
     );
 
     channel.send({
-        content:
-            `🎉 <@${user.id}> достиг(ла) отметки в ${reward.threshold} ${reward.type} чекинов!\n` +
-            `<@&${guildData.adminRoleId}> Проведёт дальнейшие процедуры выдачи награды.`,
+        content: t('handle_reward.message', locale, {
+            threshold: reward.threshold,
+            type: reward.type,
+            userId: user.id,
+        }),
         components: [closeButton],
     });
 

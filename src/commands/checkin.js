@@ -1,10 +1,11 @@
-const { MessageFlags, EmbedBuilder } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const User = require('../models/User');
 const Checkin = require('../models/Checkin');
 const moment = require('moment-timezone');
 const t = require('../utils/t');
 const GuildUser = require('../models/GuildUser');
 const Guild = require('../models/Guild');
+const Reward = require('../models/Reward');
 const handleReward = require('../utils/handleReward');
 
 module.exports = {
@@ -96,6 +97,15 @@ module.exports = {
                     ];
 
                 if (currentValue === reward.threshold) {
+                    // Подходящая награда найдена = создаём кейс и открываем канал
+                    const oldReward = await Reward.findOne({
+                        userId,
+                        guildId,
+                        'reward._id': reward._id,
+                    });
+
+                    if (oldReward) continue;
+
                     const channelId = await handleReward(
                         interaction,
                         reward,

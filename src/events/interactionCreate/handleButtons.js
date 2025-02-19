@@ -6,6 +6,7 @@ const {
     TextInputStyle,
     PermissionsBitField,
 } = require('discord.js');
+const t = require('../../utils/t');
 
 module.exports = async (client, interaction) => {
     if (!interaction.isButton()) return;
@@ -30,13 +31,13 @@ module.exports = async (client, interaction) => {
 
         const modal = new ModalBuilder()
             .setCustomId(`close_reward_${rewardId}`)
-            .setTitle('Закрытие кейса');
+            .setTitle(t('modal.title', userLang));
 
         const commentInput = new TextInputBuilder()
             .setCustomId('comment')
-            .setLabel('Комментарий для истории')
+            .setLabel(t('modal.comment', userLang))
             .setStyle(TextInputStyle.Paragraph)
-            .setRequired(true);
+            .setRequired(false);
 
         modal.addComponents(new ActionRowBuilder().addComponents(commentInput));
 

@@ -4,9 +4,7 @@ const { nanoid } = require('nanoid');
 const rewardSchema = new mongoose.Schema({
     _id: {
         type: String,
-        default: () => {
-            nanoid(6);
-        },
+        default: () => nanoid(6),
         unique: true,
     },
     userId: { type: String, required: true },
