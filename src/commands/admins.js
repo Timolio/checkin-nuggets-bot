@@ -62,7 +62,6 @@ module.exports = {
                     if (guildData?.adminRoles?.includes(role.id)) {
                         return interaction.editReply({
                             content: t('admins.already', userLang),
-                            ephemeral: true,
                         });
                     }
 
@@ -74,7 +73,6 @@ module.exports = {
 
                     await interaction.reply({
                         content: t('admins.added', userLang),
-                        ephemeral: true,
                     });
                     break;
                 case 'remove':
@@ -83,7 +81,6 @@ module.exports = {
                     if (!guildData?.adminRoles?.includes(roleId)) {
                         return interaction.editReply({
                             content: t('admins.not_found', userLang),
-                            ephemeral: true,
                         });
                     }
 
@@ -94,7 +91,6 @@ module.exports = {
 
                     interaction.editReply({
                         content: t('admins.removed', userLang),
-                        ephemeral: true,
                     });
 
                     break;
@@ -117,7 +113,6 @@ module.exports = {
                     }
                     interaction.editReply({
                         embeds: [embed],
-                        ephemeral: true,
                     });
                     break;
             }

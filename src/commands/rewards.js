@@ -57,6 +57,8 @@ module.exports = {
 
     callback: async (client, interaction) => {
         try {
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
             const subCommand = interaction.options.getSubcommand();
             const guildId = interaction.guild.id;
             const guildData = await Guild.findOne({ guildId });
@@ -91,7 +93,6 @@ module.exports = {
                     ) {
                         return interaction.reply({
                             content: t('rewards.not_found', userLang),
-                            ephemeral: true,
                         });
                     }
 
@@ -102,7 +103,6 @@ module.exports = {
 
                     interaction.reply({
                         content: t('rewards.removed', userLang),
-                        ephemeral: true,
                     });
                     break;
                 case 'list':
@@ -124,7 +124,6 @@ module.exports = {
                     }
                     interaction.reply({
                         embeds: [embed],
-                        ephemeral: true,
                     });
                     break;
             }
